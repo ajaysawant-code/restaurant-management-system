@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart Page</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="header">
+        <img src="image/logo.png" alt="Restaurant Logo">
+        <h2>Sawant Brother's Restaurant</h2>
+    </div>
+
+    <h1>Your Cart</h1>
+
+    <div id="cart-items"></div>
+
+    <h2 id="total"></h2>
+
+    <button onclick="clearCart()">Clear Cart</button>
+
+    <br><br>
+
+    <a href="bill.html">
+        <button>Proceed to Bill</button>
+    </a>
+
+    <br><br>
+
+    <a href="menu.html">Go Back to Menu</a>
+
+<script>
+
+window.onload = function () {
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let cartItemsDiv = document.getElementById("cart-items");
+    let totalDiv = document.getElementById("total");
+
+    let total = 0;
+
+    cartItemsDiv.innerHTML = "";
+
+    cart.forEach((item, index) => {
+
+        let itemTotal = item.price * item.quantity;
+
+        let div = document.createElement("div");
+
+        div.innerHTML = `
+            <div style="
+                border:1px solid #ddd;
+                padding:10px;
+                margin:10px;
+                border-radius:10px;
+            ">
+
+                <h3>${item.item}</h3>
+
+                <div>
+                    <button onclick="decreaseQty(${index})">-</button>
+
+                    <span style="margin:0 10px; font-size:18px;">
+                        ${item.quantity}
+                    </span>
+
+                    <button onclick="increaseQty(${index})">+</button>
+                </div>
+
+                <p>
+                    ₹${item.price} × ${item.quantity} = 
+                    <b>₹${itemTotal}</b>
+                </p>
+
+                <button onclick="removeItem(${index})" style="background:red;">
+                    Remove
+                </button>
+
+            </div>
+        `;
+
+        cartItemsDiv.appendChild(div);
+
+        total += itemTotal;
+    });
+
+    totalDiv.innerHTML = "Total: ₹" + total;
+};
+
+// Increase quantity
+function increaseQty(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart[index].quantity++;
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    location.reload();
+}
+
+// Decrease quantity
+function decreaseQty(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart[index].quantity--;
+
+    if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    location.reload();
+}
+
+// Remove item
+function removeItem(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart.splice(index, 1);
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    location.reload();
+}
+
+// Clear cart
+function clearCart() {
+    localStorage.removeItem("cart");
+    location.reload();
+}
+
+</script>
+
+</body>
+</html>

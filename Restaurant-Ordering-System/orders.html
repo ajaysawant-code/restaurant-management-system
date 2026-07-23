@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Admin Orders Dashboard</title>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        background: #ff5722;
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .header img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .order-card {
+        background: white;
+        margin: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 5px #ccc;
+    }
+
+    .title {
+        color: darkgreen;
+    }
+
+    .items {
+        margin-left: 15px;
+    }
+    button{
+    background:red;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:5px;
+    cursor:pointer;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<div class="header">
+    <img src="image/logo.png" alt="Restaurant Logo">
+    <h2>Sawant Brother's Restaurant</h2>
+</div>
+
+<h1>📊 Admin Dashboard - All Orders</h1>
+<h2 id="stats" style="text-align:center;color:green;"></h2>
+<div style="text-align:center; margin:20px;">
+    <input type="text" id="searchId" placeholder="Enter Order ID">
+    <button onclick="searchOrder()">Search</button>
+</div>
+
+<div id="orders"></div>
+
+
+<script>
+
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+let totalRevenue = orders.reduce(
+    (sum, order) => sum + order.total,
+    0
+);
+let itemCount = {};
+
+orders.forEach(order => {
+    order.items.forEach(item => {
+        if(itemCount[item.item]){
+            itemCount[item.item] += item.quantity;
+        } else {
+            itemCount[item.item] = item.quantity;
+        }
+    });
+});
+
+let bestItem = "";
+let maxQty = 0;
+
+for(let item in itemCount){
+    if(itemCount[item] > maxQty){
+        maxQty = itemCount[item];
+        bestItem = item;
+    }
+}
+
+document.getElementById("stats").innerHTML =
+`Total Orders: ${orders.length}
+ | Total Revenue: ₹${totalRevenue}
+ | Best Selling Item: ${bestItem} (${maxQty} sold)`;
+
+let container = document.getElementById("orders");
+if (orders.length === 0) {
+    container.innerHTML = "<h3 style='text-align:center;'>No orders found</h3>";
+}
+
+orders.reverse().forEach((order, index) => {
+
+    let div = document.createElement("div");
+    div.className = "order-card";
+
+    let itemsHTML = "";
+
+    order.items.forEach(item => {
+        itemsHTML += `
+            <div class="items">
+                ${item.item} x ${item.quantity} = ₹${item.price * item.quantity}
+            </div>
+        `;
+    });
+
+    div.innerHTML = `
+        <h2 class="title">Order ID: ${order.orderId}</h2>
+        <p><b>Customer:</b> ${order.customer}</p>
+        <p><b>Table:</b> ${order.table}</p>
+         <p><b>Date:</b> ${order.date}</p>
+        <p><b>Items:</b></p>
+        ${itemsHTML}
+        <h3>Total: ₹${order.total}</h3>
+        <button onclick="deleteOrder(${index})">Delete Order</button>
+    `;
+
+    container.appendChild(div);
+});
+function deleteOrder(index) {
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    orders.splice(orders.length - 1 - index, 1);
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    location.reload();
+}
+function searchOrder() {
+
+    let searchId = document.getElementById("searchId").value;
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    let found = orders.find(order => order.orderId === searchId);
+
+    if(found){
+        alert(
+            "Order Found!\n" +
+            "Customer: " + found.customer +
+            "\nTable: " + found.table +
+            "\nTotal: ₹" + found.total
+        );
+    } else {
+        alert("Order Not Found");
+    }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Page</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="header">
+    <img src="image/logo.png" alt="Restaurant Logo">
+    <h2>Sawant  Brother's Restaurant</h2>
+</div>
+
+    <div class="menu-item">
+        <img src="image/pizza.png" width="200" alt="Pizza">
+        <h3>Pizza</h3>
+        <p>₹200</p>
+        <button onclick="addToCart('Pizza',200)">Add to Cart</button>
+    </div>
+
+    <div class="menu-item">
+        <img src="image/burger.jpg" width="200" alt="Pizza">
+        <h3>Burger</h3>
+        <p>₹120</p>
+        <button onclick="addToCart('Burger',120)">Add to Cart</button>
+    </div>
+
+    <div class="menu-item">
+        <img src="image/coke.jpg" width="200" alt="Pizza">
+        <h3>Coke</h3>
+        <p>₹50</p>
+        <button onclick="addToCart('Coke',50)">Add to Cart</button>
+    </div>
+    <br><br>
+<a href="cart.html" class="cart-link">🛒 Go to Cart</a>
+
+    <script src="js/script.js"></script>
+
+</body>
+</html>

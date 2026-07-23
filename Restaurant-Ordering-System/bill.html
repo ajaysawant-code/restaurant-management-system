@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bill</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="header">
+    <img src="image/logo.png" alt="Restaurant Logo">
+    <h2>Sawant Brother's Restaurant</h2>
+</div>
+    <h2>Your Bill</h2>
+
+    <div id="bill-items"></div>
+
+<h2 id="bill-total"></h2>
+
+<label>Customer Name:</label>
+<input type="text" id="customerName">
+
+<br><br>
+
+<label>Table Number:</label>
+<input type="number" id="tableNumber">
+
+<br><br>
+
+<button onclick="placeOrder()">Place Order</button>
+<button onclick="window.print()">Download Bill PDF</button>
+    <script>
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        let billItems = document.getElementById("bill-items");
+        let billTotal = document.getElementById("bill-total");
+
+        let total = 0;
+
+        cart.forEach((item) => {
+
+    let itemTotal = item.price * item.quantity;
+
+    let div = document.createElement("div");
+
+    div.innerHTML =
+        item.item +
+        " x" + item.quantity +
+        " - ₹" + itemTotal;
+
+    billItems.appendChild(div);
+
+    total += itemTotal;
+});
+
+        billTotal.innerHTML = "Total Bill: ₹" + total;
+
+        function placeOrder() {
+
+    let name = document.getElementById("customerName").value;
+    let table = document.getElementById("tableNumber").value;
+
+    if (name === "" || table === "") {
+        alert("Please enter customer name and table number");
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let orderId = "ORD" + Math.floor(Math.random() * 10000);
+
+let order = {
+    orderId: orderId,
+    customer: name,
+    table: table,
+    items: cart,
+    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    date: new Date().toLocaleString()
+};
+
+    // Get old orders
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    // Add new order
+    orders.push(order);
+
+    // Save back
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    alert("Order Placed Successfully!\nOrder ID: " + orderId);
+
+    localStorage.removeItem("cart");
+
+    window.location.href = "menu.html";
+}
+    </script>
+
+</body>
+</html>
